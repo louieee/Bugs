@@ -23,6 +23,14 @@ class BugAPI(ModelViewSet):
     http_method_names = ('get', 'patch', 'post', 'delete')
 
     def filter_queryset(self, queryset):
+        """
+        This enables one to filter the bugs using the following queries:
+            - resolved (true or false): this checks for resolved bugs or unresolved bugs
+            - assigner (user id): this filters bugs whose assigner's user id is what was passed here
+            - assignee (user id): this filters bugs whose assignee's user id is what was passed here
+        :param queryset:
+        :return: the filtered bugs queryset
+        """
         resolved = self.request.query_params.get('resolved', None)
         assigner = self.request.query_params.get('assigner', None)
         assignee = self.request.query_params.get('assignee', None)

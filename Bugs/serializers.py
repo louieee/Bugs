@@ -188,10 +188,10 @@ class SignOutSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         request = self.context.pop('request')
-        logout(request=request)
         """
         this deletes the token for the user out of the system to prevent login 
         with any token belonging to that user   
         """
         Token.objects.filter(user=request.user).delete()
+        logout(request=request)
         return request.user
