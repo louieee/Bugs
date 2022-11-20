@@ -21,3 +21,4 @@ report.xlsx
 dump.rdb
 media/
 requirements.txt
+db.sqlite3

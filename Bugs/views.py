@@ -1,14 +1,14 @@
-from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+
 from Bugs import serializers
 from Bugs.models import Bug, Comment
-from rest_framework.exceptions import APIException
 
 # Create your views here.
 resolved_query = openapi.Parameter(name="resolved", in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN)
@@ -62,12 +62,23 @@ class BugAPI(ModelViewSet):
         return Response(data=serializers.BugDetailSerializer(bug).data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
-        request_body=serializers.BugSerializer,
+        request_body=serializers.UpdateBugSerializer,
+        operation_description="""
+            Actions that can be performed with this endpoint:
+                - We can update the title, the body. This action can 
+                    only be done by the assigner of this bug.
+                - We can assign the bug to a user or update the assignee to 
+                    another user. This action can only be done by the assigner
+                    of this bug.
+                - We can update the resolved status of this bug. This action
+                    can be done by both the assigner and the assignee of this bug
+                
+        """,
         operation_summary="updates a bug",
         operation_id='bug_update', responses={200: serializers.BugDetailSerializer()})
     def partial_update(self, request, *args, **kwargs):
         user = self.request.user
-        serializer = serializers.BugSerializer(instance=self.get_object(), data=request.data,
+        serializer = serializers.UpdateBugSerializer(instance=self.get_object(), data=request.data,
                                                partial=True, context={"user": user})
         serializer.is_valid(raise_exception=True)
         bug = serializer.save()
@@ -75,6 +86,7 @@ class BugAPI(ModelViewSet):
 
     @swagger_auto_schema(
         operation_summary="deletes a bug",
+        operation_description="This action can only be done by the assigner of this bug",
         operation_id='bug_delete', responses={204: None})
     def destroy(self, request, *args, **kwargs):
         if self.request.user != self.get_object().assigner:
@@ -102,7 +114,8 @@ class CommentAPI(ModelViewSet):
 
     @swagger_auto_schema(
         operation_summary="deletes a comment",
-        operation_id='comment_delete', responses={204: None})
+        operation_id='comment_delete', responses={204: None},
+        operation_description="only the author of a comment can delete that comment")
     def destroy(self, request, *args, **kwargs):
         if self.request.user != self.get_object().user:
             raise APIException(detail="you are not the author of this comment", code=status.HTTP_401_UNAUTHORIZED)
