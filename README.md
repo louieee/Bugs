@@ -44,7 +44,7 @@ to create the first database migrations and then run
         The server should start running.
 </li>
 <li>
-    Go to your browser and navigate to <a>http://localhost:8000/docs/</a>
+    Go to your browser and navigate to <a href="http://localhost:8000/docs/">http://localhost:8000/docs/</a>
 to view the swagger API documentation with which you can use to work with
 the APIs.
 </li>
