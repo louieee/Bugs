@@ -1,0 +1,8 @@
+Django==4.0.1 # this installs django
+pillow==9.3.0 # for imagefield
+gunicorn==20.1.0 # synchronous server
+djangorestframework==3.12.4 #for REST API
+openapi==1.1.0 #For documentation
+django-cors-headers== 3.13.0 #CORS
+drf-yasg==1.21.4 # Swagger
+python-decouple==3.6 # for environment variable
