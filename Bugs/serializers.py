@@ -170,6 +170,8 @@ class SigninSerializer(serializers.ModelSerializer):
         # this checks if the password tallies with the user account
         if user and not user.check_password(initial_data.pop('password')):
             raise serializers.ValidationError(detail="Invalid login credentials")
+        if not user.is_active:
+            raise serializers.ValidationError(detail="You cannot be logged in")
         initial_data['user'] = user
         return initial_data
 
