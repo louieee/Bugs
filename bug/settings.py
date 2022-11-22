@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 
 from corsheaders.defaults import default_headers
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mz%^b7-o+%mg1=*qy6qdgi9v-(93(+lryouyvjd1oaut()yn4p'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 
 # Application definition
@@ -114,7 +115,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_RENDERER_CLASSES': [
-        'bug.json_renderer.CustomJSONRenderer',
+        'Utilities.api_response.CustomJSONRenderer',
     ],
     'PAGE_SIZE': 20,
     'DEFAULT_PERMISSION_CLASSES': [
@@ -122,10 +123,7 @@ REST_FRAMEWORK = {
     ],
 
 }
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = config('ALLOWED_ORIGINS', cast=Csv())
 CORS_ALLOW_HEADERS = list(default_headers)
 
 
